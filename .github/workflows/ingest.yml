@@ -1,0 +1,46 @@
+name: FPL ingest
+
+# Runs the ingest jobs from GitHub's runners instead of Vercel, because FPL's
+# bot protection 403s Vercel's datacenter IPs. The jobs write straight to
+# Supabase (scripts/ingest.ts), so the Vercel app is not involved.
+#
+# One combined schedule: `all` runs snapshot + fixtures + live + entries.
+# Every job is an idempotent upsert, so running fixtures/entries more often
+# than strictly needed is harmless. During a live gameweek, points update at
+# this 30-minute cadence — tighten the cron then if you want fresher numbers.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Which job to run'
+        type: choice
+        default: all
+        options:
+          - all
+          - snapshot
+          - fixtures
+          - live
+          - entries
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run ingest
+        run: npm run ingest ${{ github.event.inputs.job || 'all' }}
