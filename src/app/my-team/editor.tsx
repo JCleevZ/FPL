@@ -232,13 +232,13 @@ export function TeamEditor({
         </div>
 
         {suggestionList.length === 0 ? (
-          <p className="border-2 border-dashed border-border px-4 py-8 text-center text-sm text-fg-dim">
+          <p className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-fg-dim">
             Nothing fits at the moment — every option is over budget for the slots you have
             left, or would break the {MAX_PER_CLUB}-per-club limit. Removing a pricey player
             frees things up.
           </p>
         ) : (
-          <ul className="grid gap-px border-2 border-border bg-divider sm:grid-cols-2 xl:grid-cols-3">
+          <ul className="grid gap-px overflow-hidden rounded-xl border border-border bg-divider sm:grid-cols-2 xl:grid-cols-3">
             {suggestionList.map((r) => {
               const budget = budgetByPosition[r.position];
               const blocked = canAdd(team, {
@@ -362,7 +362,7 @@ export function TeamEditor({
         <section>
           <SectionHeader title="Add players" hint={`${available.length} shown`} />
 
-          <div className="mb-3 space-y-2 border-2 border-border bg-surface p-3">
+          <div className="mb-3 space-y-2 rounded-xl border border-border bg-surface p-3">
             <div className="flex flex-wrap gap-2">
               <input
                 type="search"
@@ -443,7 +443,7 @@ export function TeamEditor({
             </div>
           </div>
 
-          <ul className="max-h-[620px] divide-y divide-divider overflow-y-auto border-2 border-border">
+          <ul className="max-h-[620px] divide-y divide-divider overflow-y-auto rounded-xl border border-border">
             {available.length === 0 && (
               <li className="px-4 py-10 text-center text-sm text-fg-dim">
                 No players match those filters.

@@ -15,7 +15,7 @@ export function SquadFixtures({
   if (clubs.length === 0) return null;
 
   return (
-    <div className="overflow-x-auto border-2 border-border">
+    <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full border-collapse text-sm">
         <thead className="bg-surface-2">
           <tr>
@@ -51,7 +51,7 @@ export function SquadFixtures({
                     {inWeek.length === 0 ? (
                       <div
                         title="Blank gameweek — this club does not play"
-                        className="border-2 border-dashed border-border py-1 text-center text-[10px] text-fg-dim"
+                        className="rounded-md border border-dashed border-border py-1 text-center text-[10px] text-fg-dim"
                       >
                         —
                       </div>
@@ -61,7 +61,7 @@ export function SquadFixtures({
                           <div
                             key={i}
                             title={`${f.home ? 'Home' : 'Away'} vs ${f.opponent} · difficulty ${f.difficulty} of 5`}
-                            className={`py-1 text-center text-[11px] font-medium ${difficultyClass(f.difficulty)}`}
+                            className={`rounded-md py-1 text-center text-[11px] font-medium ${difficultyClass(f.difficulty)}`}
                           >
                             <FixtureLabel opponent={f.opponent} home={f.home} />
                           </div>

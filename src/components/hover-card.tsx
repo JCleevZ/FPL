@@ -119,7 +119,7 @@ export function HoverCard({
               width: wide ? 320 : 240,
               visibility: coords ? 'visible' : 'hidden',
             }}
-            className="pointer-events-none fixed z-50 border-2 border-border-bright bg-popover
+            className="pointer-events-none fixed z-50 rounded-lg border border-border-bright bg-popover
                        px-3 py-2.5 text-left text-xs font-normal normal-case leading-relaxed
                        tracking-normal text-fg-muted shadow-xl"
           >

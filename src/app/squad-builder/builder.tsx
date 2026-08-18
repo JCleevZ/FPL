@@ -56,7 +56,7 @@ function Section({
   open?: boolean;
 }) {
   return (
-    <details open={open} className="group rounded-none border-2 border-border bg-surface/60">
+    <details open={open} className="group rounded-xl border border-border bg-surface/60">
       <summary
         className="flex cursor-pointer items-center justify-between px-4 py-3
                    text-sm font-medium text-fg marker:content-none"

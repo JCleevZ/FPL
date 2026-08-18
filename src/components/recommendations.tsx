@@ -42,7 +42,7 @@ export function Recommendations({
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-2 border-border bg-surface">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-surface">
       <div className="flex shrink-0 items-center gap-1 border-b border-divider px-2">
         {TABS.map((t) => (
           <button
