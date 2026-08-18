@@ -1,12 +1,6 @@
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
-import { money, type MyTeam, type TeamPlayer } from '@/lib/team/my-team';
-
-const POSITION_COLOUR: Record<Position, string> = {
-  1: 'text-pos-gk',
-  2: 'text-pos-def',
-  3: 'text-pos-mid',
-  4: 'text-pos-fwd',
-};
+import { money, type MyTeam } from '@/lib/team/my-team';
+import { PlayerCard } from '@/components/player-card';
 
 const STATUS_LABEL: Record<string, string> = {
   d: 'Doubt',
@@ -27,73 +21,50 @@ export function TeamPitch({ team, className = '' }: { team: MyTeam; className?: 
 
   return (
     <div
-      className={`flex flex-col gap-5 border-2 border-border bg-surface px-3 py-6 sm:px-6 ${className}`}
+      className={`space-y-2 rounded-xl border border-border bg-surface px-3 py-5 sm:px-6 ${className}`}
     >
-      {rows.map(({ pos, players }) => (
-        <div key={pos} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-          {players.length === 0 ? (
-            <span className="text-xs text-fg-dim">No {POSITION_NAME[pos]} yet</span>
-          ) : (
-            players.map((p) => <Card key={p.id} player={p} />)
-          )}
+      {rows.map(({ pos, players }, i) => (
+        <div key={pos}>
+          {i === 2 && <div className="mx-auto mb-2 h-px w-2/3 bg-fg/10" />}
+          <div
+            className={`flex flex-wrap items-center justify-center gap-2 rounded-lg py-2 sm:gap-3 ${
+              i % 2 === 0 ? 'bg-fg/[0.03]' : ''
+            }`}
+          >
+            {players.length === 0 ? (
+              <span className="text-xs text-fg-dim">No {POSITION_NAME[pos]} yet</span>
+            ) : (
+              players.map((p) => {
+                const drift = p.now_cost - p.purchase_price;
+                return (
+                  <PlayerCard
+                    key={p.id}
+                    name={p.web_name}
+                    team={p.team_short}
+                    position={p.position}
+                    price={money(p.now_cost)}
+                    metric={
+                      drift !== 0 ? (
+                        <span
+                          className={drift > 0 ? 'text-accent' : 'text-danger'}
+                          title={`Bought at ${money(p.purchase_price)}`}
+                        >
+                          {drift > 0 ? '▲' : '▼'}
+                          {(Math.abs(drift) / 10).toFixed(1)}
+                        </span>
+                      ) : undefined
+                    }
+                    flag={p.status && p.status !== 'a' ? STATUS_LABEL[p.status] : null}
+                    flagTitle={p.news ?? undefined}
+                    isCaptain={p.is_captain}
+                    isVice={p.is_vice_captain}
+                  />
+                );
+              })
+            )}
+          </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-function Card({ player }: { player: TeamPlayer }) {
-  const flag = player.status && player.status !== 'a' ? STATUS_LABEL[player.status] : null;
-  const drift = player.now_cost - player.purchase_price;
-
-  return (
-    <div
-      className={`relative w-[96px] rounded-none border bg-surface-2 px-2 py-2 text-center sm:w-[108px]
-                  ${player.is_captain ? 'border-accent' : 'border-border'}`}
-    >
-      {(player.is_captain || player.is_vice_captain) && (
-        <span
-          className={`absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center
-                      rounded-full text-[10px] font-bold
-                      ${player.is_captain ? 'bg-accent text-base' : 'border-2 border-border-bright text-fg-muted'}`}
-          title={player.is_captain ? 'Captain' : 'Vice-captain'}
-        >
-          {player.is_captain ? 'C' : 'V'}
-        </span>
-      )}
-
-      <div
-        className={`font-mono text-[9px] font-semibold uppercase tracking-wider ${POSITION_COLOUR[player.position]}`}
-      >
-        {POSITION_NAME[player.position]}
-      </div>
-
-      <div className="mt-0.5 truncate text-xs font-semibold" title={player.web_name}>
-        {player.web_name}
-      </div>
-      <div className="mt-0.5 text-[10px] text-fg-dim">{player.team_short}</div>
-
-      <div className="tnum mt-1 flex items-center justify-center gap-1 text-[10px]">
-        <span className="text-fg-muted">{money(player.now_cost)}</span>
-        {drift !== 0 && (
-          <span
-            className={drift > 0 ? 'text-accent' : 'text-danger'}
-            title={`Bought at ${money(player.purchase_price)}`}
-          >
-            {drift > 0 ? '▲' : '▼'}
-            {(Math.abs(drift) / 10).toFixed(1)}
-          </span>
-        )}
-      </div>
-
-      {flag && (
-        <div
-          className="mt-1 rounded-none bg-danger/15 py-0.5 text-[9px] font-semibold text-danger"
-          title={player.news ?? undefined}
-        >
-          {flag}
-        </div>
-      )}
     </div>
   );
 }

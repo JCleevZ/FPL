@@ -1,12 +1,6 @@
-import { POSITION_NAME, type Position } from '@/lib/fpl/types';
+import type { Position } from '@/lib/fpl/types';
 import type { BuiltSquad } from '@/lib/ai/squad-builder';
-
-const POSITION_COLOUR: Record<Position, string> = {
-  1: 'text-pos-gk',
-  2: 'text-pos-def',
-  3: 'text-pos-mid',
-  4: 'text-pos-fwd',
-};
+import { PlayerCard } from '@/components/player-card';
 
 /** Availability flags worth surfacing on the card. */
 const STATUS_LABEL: Record<string, string> = {
@@ -35,22 +29,32 @@ export function PitchView({
   );
 
   return (
-    <div className="overflow-hidden rounded-none border-2 border-border bg-surface">
-      {/* Flat panel rather than a drawn pitch — the rows already read as lines. */}
-      <div
-        className="space-y-5 px-3 py-6 sm:px-6"
-      >
+    <div className="overflow-hidden rounded-xl border border-border bg-surface">
+      {/* Faint row bands and a centre-line motif between DEF and MID make the
+          rows read as a pitch formation instead of a bare card grid. */}
+      <div className="space-y-2 px-3 py-5 sm:px-6">
         {rows.map((row, i) => (
-          <div key={i} className="flex flex-wrap justify-center gap-2 sm:gap-3">
-            {row.map((p) => (
-              <PlayerCard
-                key={p.id}
-                player={p}
-                team={teamName.get(p.team_id) ?? ''}
-                isCaptain={p.id === squad.captainId}
-                isVice={p.id === squad.viceCaptainId}
-              />
-            ))}
+          <div key={i}>
+            {i === 2 && <div className="mx-auto mb-2 h-px w-2/3 bg-fg/10" />}
+            <div
+              className={`flex flex-wrap justify-center gap-2 rounded-lg py-2 sm:gap-3 ${
+                i % 2 === 0 ? 'bg-fg/[0.03]' : ''
+              }`}
+            >
+              {row.map((p) => (
+                <PlayerCard
+                  key={p.id}
+                  name={p.web_name}
+                  team={teamName.get(p.team_id) ?? ''}
+                  position={p.position as Position}
+                  price={`£${(p.cost / 10).toFixed(1)}`}
+                  metric={<span className="text-accent">{p.xpts.toFixed(1)}</span>}
+                  flag={p.status && p.status !== 'a' ? STATUS_LABEL[p.status] : null}
+                  isCaptain={p.id === squad.captainId}
+                  isVice={p.id === squad.viceCaptainId}
+                />
+              ))}
+            </div>
           </div>
         ))}
       </div>
@@ -63,71 +67,17 @@ export function PitchView({
           {bench.map((p) => (
             <PlayerCard
               key={p.id}
-              player={p}
+              name={p.web_name}
               team={teamName.get(p.team_id) ?? ''}
+              position={p.position as Position}
+              price={`£${(p.cost / 10).toFixed(1)}`}
+              metric={<span className="text-accent">{p.xpts.toFixed(1)}</span>}
+              flag={p.status && p.status !== 'a' ? STATUS_LABEL[p.status] : null}
               muted
             />
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function PlayerCard({
-  player,
-  team,
-  isCaptain,
-  isVice,
-  muted,
-}: {
-  player: SquadPlayer;
-  team: string;
-  isCaptain?: boolean;
-  isVice?: boolean;
-  muted?: boolean;
-}) {
-  const flag = player.status && player.status !== 'a' ? STATUS_LABEL[player.status] : null;
-
-  return (
-    <div
-      className={`relative w-[92px] rounded-none border bg-surface-2 px-2 py-2 text-center sm:w-[104px]
-                  ${isCaptain ? 'border-accent' : 'border-border'}
-                  ${muted ? 'opacity-60' : ''}`}
-    >
-      {(isCaptain || isVice) && (
-        <span
-          className={`absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center
-                      rounded-full text-[10px] font-bold
-                      ${isCaptain ? 'bg-accent text-base' : 'border-2 border-border-bright text-fg-muted'}`}
-          title={isCaptain ? 'Captain' : 'Vice-captain'}
-        >
-          {isCaptain ? 'C' : 'V'}
-        </span>
-      )}
-
-      <div
-        className={`font-mono text-[9px] font-semibold uppercase tracking-wider ${POSITION_COLOUR[player.position as Position]}`}
-      >
-        {POSITION_NAME[player.position as Position]}
-      </div>
-
-      <div className="mt-0.5 truncate text-xs font-semibold" title={player.web_name}>
-        {player.web_name}
-      </div>
-
-      <div className="mt-0.5 text-[10px] text-fg-dim">{team}</div>
-
-      <div className="tnum mt-1 flex items-center justify-center gap-1.5 text-[10px]">
-        <span className="text-fg-muted">£{(player.cost / 10).toFixed(1)}</span>
-        <span className="text-accent">{player.xpts.toFixed(1)}</span>
-      </div>
-
-      {flag && (
-        <div className="mt-1 rounded-none bg-danger/15 py-0.5 text-[9px] font-semibold text-danger">
-          {flag}
-        </div>
-      )}
     </div>
   );
 }
