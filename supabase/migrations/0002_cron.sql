@@ -1,14 +1,20 @@
 -- Scheduled ingest via pg_cron + pg_net.
 --
--- Why not Vercel Cron: the Hobby plan only allows one run per day, which is
--- useless for price snapshots (we want every 30 min) and for live gameweek
--- tracking. pg_cron runs inside the database you already have, for free.
+-- ⚠ DEPRECATED (2026-08-18): this approach is retired. FPL's bot protection
+-- 403s Vercel's datacenter IPs, so the /api/ingest endpoint this file calls
+-- cannot reach the FPL API. Ingest now runs from GitHub Actions instead —
+-- see .github/workflows/ingest.yml (runs `npm run ingest all` every 30 min,
+-- writing directly to Supabase). The four fpl_* HTTP jobs have been
+-- unscheduled; only fpl_prune (pure SQL, at the bottom of this file) is
+-- still live and should be kept.
 --
--- BEFORE RUNNING: replace the two placeholders below.
+-- Kept for reference: the prune functions/jobs below are still in use, and
+-- this documents why not Vercel Cron: the Hobby plan only allows one run per
+-- day, which is useless for price snapshots and live gameweek tracking.
+--
+-- BEFORE RUNNING (reference only): replace the two placeholders below.
 --   <APP_URL>        e.g. https://your-app.vercel.app  (no trailing slash)
 --   <INGEST_SECRET>  the same value as the INGEST_SECRET env var
---
--- To re-point at a new deployment, re-run this file — it unschedules first.
 
 create extension if not exists pg_cron;
 create extension if not exists pg_net;
