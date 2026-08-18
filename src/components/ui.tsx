@@ -7,6 +7,33 @@ import { HoverCard } from '@/components/hover-card';
  * headings, tags and hover explanations behave identically everywhere.
  */
 
+/**
+ * Compact, contextual error banner. For errors triggered by an interaction in
+ * a specific panel (a failed drag, a blocked swap) — placed right next to that
+ * panel rather than at the top of the page, where a tall page above it would
+ * put the message out of view of whatever the user was just doing.
+ */
+export function InlineError({ message, className = '' }: { message: string; className?: string }) {
+  return (
+    <p
+      role="alert"
+      className={`rounded-md border border-danger/40 bg-danger/10 px-3 py-1.5 text-xs text-danger ${className}`}
+    >
+      {message}
+    </p>
+  );
+}
+
+/** Small pill hint, for a secondary interaction worth mentioning once but not dwelling on. */
+export function TipPill({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-fg/25 bg-fg/10 px-3 py-1 text-[11px] text-fg">
+      <span aria-hidden>⇄</span>
+      {children}
+    </div>
+  );
+}
+
 /** A bordered panel. The default surface for any grouped content. */
 export function Panel({
   children,
@@ -35,19 +62,26 @@ export function SectionHeader({
   hint,
   info,
   action,
+  right,
 }: {
   title: string;
   hint?: React.ReactNode;
   info?: React.ReactNode;
   action?: { href: string; label: string };
+  /** Extra control on the right, e.g. a collapse toggle — for anything an `action` link can't express. */
+  right?: React.ReactNode;
 }) {
+  // Chip-style label rather than a text underline or a coloured bar: it stands
+  // out through a solid baby-blue fill, so it works identically whether or not
+  // this header also carries a hover explanation or an action link. The fill is
+  // fully saturated, so the label needs dark text rather than the usual light
+  // text-on-dark-panel pairing — `text-base` is the app's own near-black, which
+  // gives strong contrast against the light chip.
   const heading = (
     <h2
-      className={`flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-fg-muted ${
-        info ? 'cursor-help border-b border-dotted border-fg-dim/60' : ''
-      }`}
+      className={`inline-flex items-center rounded-md bg-cyan px-2.5 py-1 font-mono text-xs
+                  font-semibold uppercase tracking-[0.16em] text-base ${info ? 'cursor-help' : ''}`}
     >
-      <span className="h-3 w-0.5 rounded-full bg-accent/70" aria-hidden />
       {title}
     </h2>
   );
@@ -64,16 +98,42 @@ export function SectionHeader({
         )}
         {hint && <span className="text-xs text-fg-dim">{hint}</span>}
       </div>
-      {action && (
-        <Link
-          href={action.href}
-          className="rounded-full border border-border px-3 py-1 text-xs text-fg-muted transition-colors
-                     hover:border-border-bright hover:text-fg"
-        >
-          {action.label} →
-        </Link>
-      )}
+      <div className="flex items-center gap-2">
+        {action && (
+          <Link
+            href={action.href}
+            className="rounded-full border border-border px-3 py-1 text-xs text-fg-muted transition-colors
+                       hover:border-border-bright hover:text-fg"
+          >
+            {action.label} →
+          </Link>
+        )}
+        {right}
+      </div>
     </div>
+  );
+}
+
+/** Small chevron toggle for collapsing a section's body. Rotates to show state. */
+export function CollapseToggle({
+  open,
+  onClick,
+}: {
+  open: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={open}
+      aria-label={open ? 'Collapse' : 'Expand'}
+      className="rounded-full border border-border-bright p-1.5 text-fg-dim transition-colors hover:text-fg"
+    >
+      <span className={`block text-[10px] transition-transform ${open ? 'rotate-90' : ''}`} aria-hidden>
+        ▶
+      </span>
+    </button>
   );
 }
 
@@ -109,33 +169,13 @@ export function ReasonTag({ reason }: { reason: ReasonKey }) {
   );
 }
 
-/**
- * Compact key for the three figures that appear on every player row.
- *
- * Deliberately one line: each term already explains itself on hover wherever it
- * appears, so this is a reminder that the explanations exist, not a lesson.
- */
-export function KeyLegend({ className = '' }: { className?: string }) {
-  return (
-    <div
-      className={`inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-border
-                  px-3 py-1.5 text-[11px] text-fg-muted ${className}`}
-    >
-      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">Key</span>
-      <Explain term="xpts" />
-      <span className="text-fg-dim">·</span>
-      <Explain term="fdr" />
-      <span className="text-fg-dim">·</span>
-      <Explain term="ownership">% owned</Explain>
-      <span className="text-fg-dim">— hover any term</span>
-    </div>
-  );
-}
-
 /** A quiet explanatory note. For "here is how to read this" copy. */
 export function InfoNote({ title, children }: { title?: string; children: React.ReactNode }) {
+  // Distinguished by its own background rather than a side bar — consistent
+  // with the rest of the palette, which builds structure from surface
+  // contrast rather than outlines.
   return (
-    <div className="rounded-r-lg border-l-2 border-border-bright bg-surface/60 px-4 py-3">
+    <div className="rounded-lg bg-surface-2/70 px-4 py-3">
       {title && (
         <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
           {title}

@@ -111,6 +111,9 @@ export async function saveSquad(squad: BuiltSquad, filters: SquadFilters) {
       strategy: squad.strategy,
       keyRisk: squad.keyRisk,
       notes: squad.players.filter((p) => p.note).map((p) => ({ id: p.id, note: p.note })),
+      // Not its own column — this is the one place a draft's projection is
+      // kept, purely for display on the drafts list.
+      xpts: squad.squad.xpts,
     },
   });
 

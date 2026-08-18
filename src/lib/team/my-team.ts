@@ -146,3 +146,21 @@ export function outstandingNeeds(team: MyTeam): { position: Position; count: num
     .map((position) => ({ position, count: SQUAD_QUOTA[position] - team.counts[position] }))
     .filter((n) => n.count > 0);
 }
+
+/**
+ * The squad as it would sit with one player sold — the budget and legality
+ * check every swap has to pass.
+ *
+ * Selling returns today's price, not what was originally paid, so the freed
+ * cash is `now_cost`. `summarise`'s bank (which tracks purchase price) has to
+ * be overridden rather than recomputed from the filtered list. Used wherever a
+ * "swap this player for that one" decision needs to be validated: the upgrade
+ * suggestions, the live swap action, and the drag-and-drop pitch editor.
+ */
+export function shadowTeamWithout(team: MyTeam, outId: number | null): MyTeam {
+  if (outId === null) return team;
+  const removed = team.players.find((p) => p.id === outId);
+  if (!removed) return team;
+  const remaining = team.players.filter((p) => p.id !== outId);
+  return { ...summarise(remaining, team.budget), bank: team.bank + removed.now_cost };
+}

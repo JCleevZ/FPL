@@ -4,10 +4,12 @@ import { useActionState, useState, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { importSquad } from '@/lib/team/actions';
-import { generateSquad, type BuilderState } from './actions';
+import { generateSquad, saveSquad, type BuilderState } from './actions';
+import Link from 'next/link';
 import { PitchView } from '@/components/pitch-view';
 import { PlayerPicker } from '@/components/player-picker';
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
+import type { SquadFilters } from '@/lib/ai/schemas';
 
 export interface TeamOption {
   id: number;
@@ -328,7 +330,9 @@ export function SquadBuilder({
             </div>
           )}
 
-          {state.squad && <Result squad={state.squad} teamName={teamName} />}
+          {state.squad && (
+            <Result squad={state.squad} filters={state.filters ?? {}} teamName={teamName} />
+          )}
         </div>
       </div>
     </div>
@@ -350,14 +354,19 @@ function Toggle({ name, text }: { name: string; text: string }) {
 
 function Result({
   squad,
+  filters,
   teamName,
 }: {
   squad: NonNullable<BuilderState['squad']>;
+  filters: SquadFilters;
   teamName: Map<number, string>;
 }) {
   const [from, to] = squad.horizonGameweeks;
   const [importing, startImport] = useTransition();
   const [importError, setImportError] = useState<string | null>(null);
+  const [saving, startSave] = useTransition();
+  const [saveState, setSaveState] = useState<'idle' | 'saved' | 'error'>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
   const router = useRouter();
 
   // Replaces whatever is currently in My Team, then sends you to the dashboard
@@ -375,6 +384,21 @@ function Result({
     });
   };
 
+  // Stores the squad without touching your active team — for comparing a few
+  // builds side by side before committing to one.
+  const onSaveDraft = () => {
+    setSaveError(null);
+    startSave(async () => {
+      const result = await saveSquad(squad, filters);
+      if (result.error) {
+        setSaveState('error');
+        setSaveError(result.error);
+      } else {
+        setSaveState('saved');
+      }
+    });
+  };
+
   return (
     <div className="space-y-5">
       <div className="rounded-xl border border-border bg-surface p-5">
@@ -385,18 +409,40 @@ function Result({
               GW{from}–{to} · {squad.provider === 'optimiser' ? 'optimiser only' : squad.model}
               {squad.cached && ' · cached'}
             </p>
-            <button
-              type="button"
-              onClick={onImport}
-              disabled={importing}
-              className="mt-3 rounded-full border border-accent px-3 py-1.5 text-xs font-medium
-                         text-accent transition-colors hover:bg-accent/10 disabled:opacity-50"
-            >
-              {importing ? 'Importing…' : 'Use this as my team'}
-            </button>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={onImport}
+                disabled={importing}
+                className="rounded-full border border-accent px-3 py-1.5 text-xs font-medium
+                           text-accent transition-colors hover:bg-accent/10 disabled:opacity-50"
+              >
+                {importing ? 'Importing…' : 'Use this as my team'}
+              </button>
+              <button
+                type="button"
+                onClick={onSaveDraft}
+                disabled={saving || saveState === 'saved'}
+                className="rounded-full border border-border-bright px-3 py-1.5 text-xs font-medium
+                           text-fg-muted transition-colors hover:border-accent hover:text-accent
+                           disabled:cursor-default disabled:opacity-70"
+              >
+                {saving ? 'Saving…' : saveState === 'saved' ? 'Saved as draft ✓' : 'Save draft'}
+              </button>
+              {saveState === 'saved' && (
+                <Link href="/my-team/drafts" className="text-xs text-accent hover:underline">
+                  View drafts →
+                </Link>
+              )}
+            </div>
             {importError && (
               <p role="alert" className="mt-1.5 text-xs text-danger">
                 {importError}
+              </p>
+            )}
+            {saveState === 'error' && saveError && (
+              <p role="alert" className="mt-1.5 text-xs text-danger">
+                {saveError}
               </p>
             )}
           </div>

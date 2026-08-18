@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { loadMyTeam } from '@/lib/team/actions';
 import { getInsights, getRecommendations } from '@/lib/model/recommendations';
+import { getUpgradeIdeas } from '@/lib/team/upgrades';
 import { maxSpendOn, outstandingNeeds } from '@/lib/team/my-team';
 import type { Position } from '@/lib/fpl/types';
 import { TeamEditor, type PickablePlayer } from './editor';
@@ -55,7 +56,7 @@ export default async function MyTeamPage() {
 
   // Insights for EVERY player, so the add-list and your own squad show the same
   // figures and tags the dashboard shows. Both calls share one computation.
-  const [suggestions, insights] = await Promise.all([
+  const [suggestions, insights, { count: draftCount }] = await Promise.all([
     getRecommendations({
       excludeIds: team.players.map((p) => p.id),
       positions: suggestionPositions,
@@ -63,7 +64,13 @@ export default async function MyTeamPage() {
       perPosition: 25,
     }),
     getInsights(),
+    supabase.from('squads').select('*', { count: 'exact', head: true }),
   ]);
+
+  // "Add a player" is meaningless once the squad is full — there is no slot to
+  // add into. Once complete, the only genuine improvement is a swap: sell the
+  // weakest player in a position, buy someone who outscores them.
+  const upgrades = needs.length === 0 ? getUpgradeIdeas(team, insights.byId) : [];
 
   return (
     <TeamEditor
@@ -74,6 +81,8 @@ export default async function MyTeamPage() {
       insights={Object.fromEntries(insights.byId)}
       budgetByPosition={budgetByPosition}
       needs={needs}
+      upgrades={upgrades}
+      draftCount={draftCount ?? 0}
     />
   );
 }

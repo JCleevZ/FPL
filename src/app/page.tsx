@@ -8,7 +8,7 @@ import { SQUAD_SIZE } from '@/lib/model/optimiser';
 import { TeamPitch } from '@/components/team-pitch';
 import { Recommendations } from '@/components/recommendations';
 import { SquadFixtures } from '@/components/squad-fixtures';
-import { KeyLegend, SectionHeader, Stat, StatStrip } from '@/components/ui';
+import { SectionHeader, Stat, StatStrip } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,10 +71,6 @@ export default async function HomePage() {
           <Stat label="Squad size" value={`${team.players.length} / ${SQUAD_SIZE}`} />
         </StatStrip>
       </section>
-
-      <div className="mb-8">
-        <KeyLegend />
-      </div>
 
       {team.players.length === 0 && <EmptyTeam />}
 

@@ -12,26 +12,28 @@ async function main() {
     });
     if (error) throw error;
     const uid = data.user!.id;
-    // Include a rotation-risk player so the tags can be compared across pages.
+
+    // Full, legal 15-player squad so "Upgrade ideas" (only shown once complete) renders.
     const { data: picks } = await db.from('players')
-      .select('id, now_cost, team_id, position, web_name')
-      .order('total_points', { ascending: false }).limit(150);
+      .select('id, now_cost, team_id, position').order('now_cost', { ascending: true }).limit(300);
     const chosen: any[] = [];
-    const quota: Record<number, number> = { 1: 1, 2: 3, 3: 3, 4: 1 };
+    const quota: Record<number, number> = { 1: 2, 2: 5, 3: 5, 4: 3 };
     const perClub: Record<number, number> = {};
     for (const p of picks ?? []) {
       if ((quota[p.position] ?? 0) <= 0) continue;
       if ((perClub[p.team_id] ?? 0) >= 3) continue;
       quota[p.position]--; perClub[p.team_id] = (perClub[p.team_id] ?? 0) + 1;
-      chosen.push({ user_id: uid, player_id: p.id, purchase_price: p.now_cost });
+      chosen.push({ user_id: uid, player_id: p.id, purchase_price: p.now_cost, is_captain: false, is_vice_captain: false });
     }
-    await db.from('my_team').insert(chosen);
-    console.log('created with', chosen.length, 'players');
+    const ins1 = await db.from('my_team').insert(chosen);
+    if (ins1.error) throw new Error('my_team insert failed: ' + JSON.stringify(ins1.error));
+    console.log('my_team: created with', chosen.length, 'players (verified)');
   } else {
     const { data } = await db.auth.admin.listUsers();
     const u = data.users.find((x) => x.email === email);
     if (!u) return console.log('none');
     await db.auth.admin.deleteUser(u.id);
+    await db.from('squads').delete().eq('user_id', u.id);
     const { count } = await db.from('profiles').select('*', { count: 'exact', head: true });
     console.log('deleted; profiles remaining:', count);
   }
