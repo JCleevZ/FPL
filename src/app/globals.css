@@ -4,10 +4,10 @@
  * Purple cloud aesthetic.
  *
  * A drifting purple field sits behind everything, and the content rides on top
- * in near-opaque panels edged in light blue. The panels stay mostly solid on
- * purpose: this app is full of dense tables, and text over a moving gradient is
- * unreadable. The background shows through the gaps between panels, not behind
- * the numbers.
+ * in near-opaque panels edged in faint white tints. The panels stay mostly solid
+ * on purpose: this app is full of dense tables, and text over a moving gradient
+ * is unreadable. The background shows through the gaps between panels, not
+ * behind the numbers.
  */
 
 @theme {
@@ -20,11 +20,11 @@
      never let the moving background show through its text. */
   --color-popover: #2b1f52;
 
-  /* borders — light blue, and thick enough to read as a frame */
-  --color-border: #7fc4ec;
-  --color-border-bright: #b6e2ff;
-  /* Internal hairlines. A full-strength blue on every table row would be a cage. */
-  --color-divider: rgba(127, 196, 236, 0.22);
+  /* borders — quiet white tints; structure comes from surface contrast, not outlines */
+  --color-border: rgba(246, 243, 255, 0.10);
+  --color-border-bright: rgba(246, 243, 255, 0.24);
+  /* Internal hairlines, quieter still. */
+  --color-divider: rgba(246, 243, 255, 0.07);
 
   /* text */
   --color-fg: #f6f3ff;
@@ -81,11 +81,11 @@ body::before {
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(42% 38% at 18% 22%, rgba(147, 92, 246, 0.5), transparent 70%),
-    radial-gradient(38% 34% at 80% 16%, rgba(86, 66, 205, 0.48), transparent 70%),
-    radial-gradient(46% 42% at 64% 74%, rgba(178, 96, 240, 0.36), transparent 72%),
-    radial-gradient(44% 40% at 10% 76%, rgba(96, 62, 190, 0.42), transparent 70%),
-    radial-gradient(52% 46% at 46% 46%, rgba(64, 38, 116, 0.55), transparent 74%);
+    radial-gradient(42% 38% at 18% 22%, rgba(147, 92, 246, 0.38), transparent 70%),
+    radial-gradient(38% 34% at 80% 16%, rgba(86, 66, 205, 0.36), transparent 70%),
+    radial-gradient(46% 42% at 64% 74%, rgba(178, 96, 240, 0.27), transparent 72%),
+    radial-gradient(44% 40% at 10% 76%, rgba(96, 62, 190, 0.32), transparent 70%),
+    radial-gradient(52% 46% at 46% 46%, rgba(64, 38, 116, 0.42), transparent 74%);
   filter: blur(56px);
   animation: cloud-drift 52s ease-in-out infinite alternate;
 }
@@ -109,7 +109,7 @@ body::after {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.22;
+  opacity: 0.16;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
