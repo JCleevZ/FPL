@@ -46,10 +46,10 @@
   --color-fdr-4: #f09aa8;
   --color-fdr-5: #b52e45;
 
-  /* position badges */
+  /* position badges — each on its own hue, none reused elsewhere as a signal */
   --color-pos-gk: #f2c879;
   --color-pos-def: #8ed4ff;
-  --color-pos-mid: #ffffff;
+  --color-pos-mid: #8bcf5e;
   --color-pos-fwd: #ff9db0;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
@@ -129,7 +129,7 @@ body::after {
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(127, 196, 236, 0.4);
+  background-color: rgba(246, 243, 255, 0.25);
 }
 *::-webkit-scrollbar-track {
   background: transparent;
@@ -137,7 +137,7 @@ body::after {
 
 /* Visible focus for keyboard users, without a permanent ring on click. */
 :focus-visible {
-  outline: 2px solid var(--color-border-bright);
+  outline: 2px solid rgba(246, 243, 255, 0.6);
   outline-offset: 1px;
 }
 
