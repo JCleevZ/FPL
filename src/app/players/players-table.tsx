@@ -125,11 +125,11 @@ const COLUMNS: Col[] = [
   },
 ];
 
-const POSITION_COLOUR: Record<Position, string> = {
-  1: 'text-pos-gk',
-  2: 'text-pos-def',
-  3: 'text-pos-mid',
-  4: 'text-pos-fwd',
+const POSITION_CHIP: Record<Position, string> = {
+  1: 'bg-pos-gk/15 text-pos-gk',
+  2: 'bg-pos-def/15 text-pos-def',
+  3: 'bg-pos-mid/15 text-pos-mid',
+  4: 'bg-pos-fwd/15 text-pos-fwd',
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -287,9 +287,9 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
         </label>
       </div>
 
-      <div className="overflow-x-auto rounded-none border-2 border-border">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full border-collapse text-sm">
-          <thead className="bg-surface-2">
+          <thead className="sticky top-0 z-10 bg-surface-2">
             <tr>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-fg-muted">Player</th>
               <th className="px-2 py-2.5 text-left text-xs font-semibold text-fg-muted">Team</th>
@@ -323,7 +323,7 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
                       {sp && (
                         <span
                           title={sp}
-                          className="rounded-none bg-violet/20 px-1 text-[9px] font-bold text-violet"
+                          className="rounded bg-violet/20 px-1 text-[9px] font-bold text-violet"
                         >
                           SP
                         </span>
@@ -331,7 +331,7 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
                       {p.status && p.status !== 'a' && (
                         <span
                           title={p.news || STATUS_LABEL[p.status] || 'Unavailable'}
-                          className="rounded-none bg-danger/20 px-1 text-[9px] font-bold text-danger"
+                          className="rounded bg-danger/20 px-1 text-[9px] font-bold text-danger"
                         >
                           {p.chance_of_playing_next_round ?? 0}%
                         </span>
@@ -339,10 +339,12 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
                     </span>
                   </td>
                   <td className="px-2 py-2 text-fg-muted">{teamName.get(p.team_id)}</td>
-                  <td
-                    className={`px-2 py-2 font-mono text-xs ${POSITION_COLOUR[p.position as Position]}`}
-                  >
-                    {POSITION_NAME[p.position as Position]}
+                  <td className="px-2 py-2">
+                    <span
+                      className={`rounded-full px-1.5 py-0.5 font-mono text-[10px] font-semibold ${POSITION_CHIP[p.position as Position]}`}
+                    >
+                      {POSITION_NAME[p.position as Position]}
+                    </span>
                   </td>
                   {COLUMNS.map((c) => {
                     const v = displayValue(p, c);
