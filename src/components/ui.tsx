@@ -18,7 +18,7 @@ export function Panel({
   padded?: boolean;
 }) {
   return (
-    <div className={`border-2 border-border bg-surface ${padded ? 'p-5' : ''} ${className}`}>
+    <div className={`rounded-xl border border-border bg-surface ${padded ? 'p-5' : ''} ${className}`}>
       {children}
     </div>
   );
@@ -43,10 +43,11 @@ export function SectionHeader({
 }) {
   const heading = (
     <h2
-      className={`font-mono text-xs uppercase tracking-[0.16em] text-fg-muted ${
+      className={`flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-fg-muted ${
         info ? 'cursor-help border-b border-dotted border-fg-dim/60' : ''
       }`}
     >
+      <span className="h-3 w-0.5 rounded-full bg-accent/70" aria-hidden />
       {title}
     </h2>
   );
@@ -66,7 +67,7 @@ export function SectionHeader({
       {action && (
         <Link
           href={action.href}
-          className="border-2 border-border px-3 py-1 text-xs text-fg-muted transition-colors
+          className="rounded-full border border-border px-3 py-1 text-xs text-fg-muted transition-colors
                      hover:border-border-bright hover:text-fg"
         >
           {action.label} →
@@ -101,7 +102,7 @@ export function ReasonTag({ reason }: { reason: ReasonKey }) {
   const { label, tone, description } = REASONS[reason];
   return (
     <HoverCard content={description}>
-      <span className={`cursor-help border px-1.5 py-0.5 text-[10px] font-medium ${TONE_CLASS[tone]}`}>
+      <span className={`cursor-help rounded-full border px-2 py-0.5 text-[10px] font-medium ${TONE_CLASS[tone]}`}>
         {label}
       </span>
     </HoverCard>
@@ -117,7 +118,7 @@ export function ReasonTag({ reason }: { reason: ReasonKey }) {
 export function KeyLegend({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`inline-flex flex-wrap items-center gap-x-3 gap-y-1 border-2 border-border
+      className={`inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-border
                   px-3 py-1.5 text-[11px] text-fg-muted ${className}`}
     >
       <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">Key</span>
@@ -134,7 +135,7 @@ export function KeyLegend({ className = '' }: { className?: string }) {
 /** A quiet explanatory note. For "here is how to read this" copy. */
 export function InfoNote({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <div className="border-l-2 border-border-bright bg-surface/60 px-4 py-3">
+    <div className="rounded-r-lg border-l-2 border-border-bright bg-surface/60 px-4 py-3">
       {title && (
         <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
           {title}
@@ -164,7 +165,7 @@ export function Stat({
       <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
         {term ? <Explain term={term}>{label}</Explain> : label}
       </div>
-      <div className={`tnum mt-2 text-2xl font-medium ${colour}`}>{value}</div>
+      <div className={`tnum mt-2 text-3xl font-medium ${colour}`}>{value}</div>
     </div>
   );
 }
@@ -172,7 +173,7 @@ export function Stat({
 /** Hairline-separated strip of stats. */
 export function StatStrip({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid gap-px border-2 border-border bg-divider sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-divider sm:grid-cols-2 lg:grid-cols-4">
       {children}
     </div>
   );
