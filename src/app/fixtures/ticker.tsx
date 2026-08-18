@@ -122,7 +122,7 @@ export function FixtureTicker({
           <select
             value={span}
             onChange={(e) => setSpan(Number(e.target.value))}
-            className="rounded-none border border-border/50 bg-surface px-2.5 py-1.5 text-sm text-fg
+            className="rounded-md border border-border/50 bg-surface px-2.5 py-1.5 text-sm text-fg
                        outline-none focus:border-accent focus:ring-1 focus:ring-accent"
           >
             {[4, 6, 8, 10, 12].map((n) => (
@@ -147,13 +147,13 @@ export function FixtureTicker({
         <div className="ml-auto flex items-center gap-1.5 text-xs text-fg-dim">
           <span>Easier</span>
           {[1, 2, 3, 4, 5].map((d) => (
-            <span key={d} className={`h-4 w-6 ${difficultyClass(d)}`} />
+            <span key={d} className={`h-4 w-6 rounded-sm ${difficultyClass(d)}`} />
           ))}
           <span>Harder</span>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-none border-2 border-border">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full border-collapse text-sm">
           <thead className="bg-surface-2">
             <tr>
@@ -179,11 +179,11 @@ export function FixtureTicker({
                 {gameweeks.map((gw) => {
                   const cells = grid.get(team.id)?.get(gw) ?? [];
                   return (
-                    <td key={gw} className="px-1 py-1.5">
+                    <td key={gw} className="px-1.5 py-2">
                       {cells.length === 0 ? (
                         <div
                           title="Blank gameweek"
-                          className="rounded-none border-2 border-dashed border-border py-1 text-center text-[10px] text-fg-dim"
+                          className="rounded-md border border-dashed border-border py-1 text-center text-[10px] text-fg-dim"
                         >
                           —
                         </div>
@@ -193,7 +193,7 @@ export function FixtureTicker({
                             <div
                               key={i}
                               title={`${c.home ? 'Home' : 'Away'} vs ${c.opponent} · difficulty ${c.difficulty}`}
-                              className={`py-1 text-center text-[11px] font-medium ${difficultyClass(c.difficulty)}`}
+                              className={`rounded-md py-1.5 text-center text-[11px] font-medium ${difficultyClass(c.difficulty)}`}
                             >
                               <FixtureLabel opponent={c.opponent} home={c.home} />
                             </div>
