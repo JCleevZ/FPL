@@ -1,26 +1,155 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Purple cloud aesthetic.
+ *
+ * A drifting purple field sits behind everything, and the content rides on top
+ * in near-opaque panels edged in light blue. The panels stay mostly solid on
+ * purpose: this app is full of dense tables, and text over a moving gradient is
+ * unreadable. The background shows through the gaps between panels, not behind
+ * the numbers.
+ */
+
+@theme {
+  /* surfaces — deep purple, panels slightly translucent so the field shows through */
+  --color-base: #150e29;
+  --color-surface: rgba(30, 21, 56, 0.86);
+  --color-surface-2: rgba(42, 30, 74, 0.9);
+  --color-surface-3: rgba(56, 41, 96, 0.92);
+  /* Fully opaque. Anything floating above the page — hover cards, menus — must
+     never let the moving background show through its text. */
+  --color-popover: #2b1f52;
+
+  /* borders — light blue, and thick enough to read as a frame */
+  --color-border: #7fc4ec;
+  --color-border-bright: #b6e2ff;
+  /* Internal hairlines. A full-strength blue on every table row would be a cage. */
+  --color-divider: rgba(127, 196, 236, 0.22);
+
+  /* text */
+  --color-fg: #f6f3ff;
+  --color-fg-muted: #c5bbe2;
+  --color-fg-dim: #8f83b4;
+
+  /* accents — white leads, colour is reserved for meaning */
+  --color-accent: #ffffff;
+  --color-accent-dim: #d6cdf2;
+  --color-violet: #c4a8ff;
+  --color-cyan: #8ed4ff;
+  --color-amber: #f2c879;
+  --color-danger: #ff8095;
+
+  /* fixture difficulty (1 easiest, 5 hardest) — tuned to read against purple */
+  --color-fdr-1: #6ee7c0;
+  --color-fdr-2: #8fd9a8;
+  --color-fdr-3: rgba(255, 255, 255, 0.14);
+  --color-fdr-4: #f09aa8;
+  --color-fdr-5: #b52e45;
+
+  /* position badges */
+  --color-pos-gk: #f2c879;
+  --color-pos-def: #8ed4ff;
+  --color-pos-mid: #ffffff;
+  --color-pos-fwd: #ff9db0;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, Consolas, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-base);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+}
+
+/*
+ * The cloud field. Overlapping soft radials, blurred hard and drifting slowly.
+ * Inset beyond the viewport so the blurred edges and the drift never expose a
+ * seam at the screen edge.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 38% at 18% 22%, rgba(147, 92, 246, 0.5), transparent 70%),
+    radial-gradient(38% 34% at 80% 16%, rgba(86, 66, 205, 0.48), transparent 70%),
+    radial-gradient(46% 42% at 64% 74%, rgba(178, 96, 240, 0.36), transparent 72%),
+    radial-gradient(44% 40% at 10% 76%, rgba(96, 62, 190, 0.42), transparent 70%),
+    radial-gradient(52% 46% at 46% 46%, rgba(64, 38, 116, 0.55), transparent 74%);
+  filter: blur(56px);
+  animation: cloud-drift 52s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2.5%, 2%, 0) scale(1.07);
+  }
+  100% {
+    transform: translate3d(2%, -2.5%, 0) scale(1.03);
+  }
+}
+
+/* Fine grain over the top. Stops the big gradients banding on wide screens. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Tabular numerals everywhere numbers are compared down a column. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Thin, unobtrusive scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-bright) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(127, 196, 236, 0.4);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Visible focus for keyboard users, without a permanent ring on click. */
+:focus-visible {
+  outline: 2px solid var(--color-border-bright);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

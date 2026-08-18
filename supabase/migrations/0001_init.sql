@@ -159,10 +159,13 @@ create index if not exists fixtures_teams_idx on fixtures(team_h, team_a);
 create index if not exists fixtures_kickoff_idx on fixtures(kickoff_time);
 
 -- Per-player, per-gameweek actuals.
+-- Aggregated per gameweek, matching what `event/{gw}/live` returns: in a double
+-- gameweek both fixtures are summed into one row. Per-fixture detail would need
+-- 700 element-summary calls per refresh, which is not worth it.
 create table if not exists player_gw_stats (
   player_id            integer not null references players(id) on delete cascade,
   gw                   smallint not null references gameweeks(id),
-  fixture_id           integer,
+  fixture_count        smallint default 1,
   opponent_team        smallint,
   was_home             boolean,
   total_points         integer default 0,
@@ -194,7 +197,7 @@ create table if not exists player_gw_stats (
   transfers_in         integer,
   transfers_out        integer,
   updated_at           timestamptz not null default now(),
-  primary key (player_id, gw, fixture_id)
+  primary key (player_id, gw)
 );
 
 create index if not exists player_gw_stats_gw_idx on player_gw_stats(gw);
@@ -406,3 +409,50 @@ alter table ai_generations enable row level security;
 drop policy if exists ai_generations_read on ai_generations;
 create policy ai_generations_read on ai_generations
   for select to authenticated using (true);
+
+-- ---------------------------------------------------------------------------
+-- Grants
+--
+-- Separate from RLS, and both are required. RLS decides which ROWS a role may
+-- touch; grants decide whether it may touch the table at all. Relying on
+-- Supabase's default privileges is not enough for tables created by a migration,
+-- which is why ingest hit "permission denied for table teams".
+-- ---------------------------------------------------------------------------
+
+grant usage on schema public to anon, authenticated, service_role;
+
+-- Ingest runs with the secret key and needs full write access. RLS is bypassed
+-- for service_role, so no policies are needed for it.
+grant all privileges on all tables in schema public to service_role;
+grant all privileges on all sequences in schema public to service_role;
+grant all privileges on all functions in schema public to service_role;
+
+-- Signed-in users read everything (RLS still filters rows) and write only their
+-- own records.
+grant select on all tables in schema public to authenticated;
+grant insert, update, delete on profiles, squads, watchlist to authenticated;
+
+-- Apply the same to anything added later, so a new table is not a new outage.
+alter default privileges in schema public
+  grant all privileges on tables to service_role;
+alter default privileges in schema public
+  grant all privileges on sequences to service_role;
+alter default privileges in schema public
+  grant select on tables to authenticated;
+
+-- Diagnostic: confirms which Postgres role an API key actually authenticates as.
+-- Supabase's newer sb_secret_ keys do not always map to service_role, and a
+-- silent role mismatch looks exactly like a missing grant.
+create or replace function whoami()
+returns jsonb
+language sql
+stable
+as $$
+  select jsonb_build_object(
+    'current_user', current_user,
+    'session_user', session_user,
+    'bypasses_rls', (select rolbypassrls from pg_roles where rolname = current_user)
+  );
+$$;
+
+grant execute on function whoami() to anon, authenticated, service_role;
