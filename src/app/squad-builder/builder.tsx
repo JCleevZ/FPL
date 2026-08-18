@@ -313,14 +313,14 @@ export function SquadBuilder({
           {state.error && (
             <div
               role="alert"
-              className="rounded-none border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger"
+              className="rounded-lg border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger"
             >
               {state.error}
             </div>
           )}
 
           {!state.squad && !state.error && (
-            <div className="flex h-full min-h-80 items-center justify-center rounded-none border-2 border-dashed border-border p-8 text-center">
+            <div className="flex h-full min-h-80 items-center justify-center rounded-xl border border-dashed border-border p-8 text-center">
               <p className="max-w-sm text-sm text-fg-muted">
                 Set as few or as many filters as you like, then build. Try just{' '}
                 <span className="text-fg">Build around: Haaland</span> and nothing else.
@@ -377,7 +377,7 @@ function Result({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-none border-2 border-border bg-surface p-5">
+      <div className="rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold tracking-tight">{squad.name}</h2>
@@ -389,7 +389,7 @@ function Result({
               type="button"
               onClick={onImport}
               disabled={importing}
-              className="mt-3 rounded-none border border-accent px-3 py-1.5 text-xs font-medium
+              className="mt-3 rounded-full border border-accent px-3 py-1.5 text-xs font-medium
                          text-accent transition-colors hover:bg-accent/10 disabled:opacity-50"
             >
               {importing ? 'Importing…' : 'Use this as my team'}
@@ -409,7 +409,7 @@ function Result({
 
         <p className="mt-4 text-sm leading-relaxed text-fg">{squad.strategy}</p>
 
-        <div className="mt-4 rounded-none border border-amber/30 bg-amber/5 px-3 py-2.5">
+        <div className="mt-4 rounded-lg border border-amber/30 bg-amber/5 px-3 py-2.5">
           <span className="text-xs font-semibold uppercase tracking-wider text-amber">
             Key risk
           </span>
@@ -417,7 +417,7 @@ function Result({
         </div>
 
         {squad.relaxations.length > 0 && (
-          <p className="mt-3 rounded-none border border-cyan/30 bg-cyan/5 px-3 py-2 text-xs text-cyan">
+          <p className="mt-3 rounded-lg border border-cyan/30 bg-cyan/5 px-3 py-2 text-xs text-cyan">
             To find a legal 15, {squad.relaxations.join('; ')}.
           </p>
         )}
@@ -431,7 +431,7 @@ function Result({
 
       <PitchView squad={squad} teamName={teamName} />
 
-      <div className="rounded-none border-2 border-border bg-surface">
+      <div className="overflow-hidden rounded-xl border border-border bg-surface">
         <h3 className="border-b border-divider px-4 py-3 text-sm font-medium">Why these picks</h3>
         <ul className="divide-y divide-divider">
           {squad.players
