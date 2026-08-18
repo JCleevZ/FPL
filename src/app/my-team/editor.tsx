@@ -290,7 +290,7 @@ export function TeamEditor({
             {([1, 2, 3, 4] as Position[]).map((pos) => {
               const group = team.players.filter((p) => p.position === pos);
               return (
-                <div key={pos} className="border-2 border-border bg-surface p-3">
+                <div key={pos} className="rounded-xl border border-border bg-surface p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <span className={`font-mono text-xs font-semibold uppercase ${POSITION_COLOUR[pos]}`}>
                       {POSITION_NAME[pos]}
@@ -303,7 +303,7 @@ export function TeamEditor({
                   {group.length === 0 ? (
                     <p className="py-2 text-center text-xs text-fg-dim">None picked yet</p>
                   ) : (
-                    <ul className="divide-y divide-divider border border-divider">
+                    <ul className="divide-y divide-divider overflow-hidden rounded-lg border border-divider">
                       {group.map((p) => {
                         const insight = insights[p.id];
                         return (
@@ -578,7 +578,7 @@ function Armbands({
         onClick={onCaptain}
         disabled={disabled}
         title="Make captain — doubles their points"
-        className={`h-5 w-5 text-[10px] font-bold transition-colors ${
+        className={`h-5 w-5 rounded-md text-[10px] font-bold transition-colors ${
           isCaptain ? 'bg-accent text-base' : 'border border-border/50 text-fg-dim hover:text-fg'
         }`}
       >
@@ -589,8 +589,8 @@ function Armbands({
         onClick={onVice}
         disabled={disabled}
         title="Make vice-captain — takes over if the captain does not play"
-        className={`h-5 w-5 text-[10px] font-bold transition-colors ${
-          isVice ? 'bg-fg-muted text-base' : 'border border-border/50 text-fg-dim hover:text-fg'
+        className={`h-5 w-5 rounded-md text-[10px] font-bold transition-colors ${
+          isVice ? 'bg-accent text-base' : 'border border-border/50 text-fg-dim hover:text-fg'
         }`}
       >
         V
@@ -601,7 +601,7 @@ function Armbands({
         disabled={disabled}
         aria-label={`Remove ${name}`}
         title={`Remove ${name}`}
-        className="h-5 w-5 border border-border/50 text-xs text-fg-dim transition-colors
+        className="h-5 w-5 rounded-md border border-border/50 text-xs text-fg-dim transition-colors
                    hover:border-danger hover:text-danger"
       >
         ×
