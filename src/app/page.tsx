@@ -79,7 +79,7 @@ export default async function HomePage() {
       {team.players.length === 0 && <EmptyTeam />}
 
       {!team.complete && team.players.length > 0 && (
-        <p className="mb-5 border border-amber/40 bg-amber/10 px-4 py-2.5 text-sm text-amber">
+        <p className="mb-5 rounded-lg border border-amber/40 bg-amber/10 px-4 py-2.5 text-sm text-amber">
           Squad incomplete — still need {team.missing.join(', ')}.{' '}
           <Link href="/my-team" className="underline">
             Finish it
@@ -102,7 +102,7 @@ export default async function HomePage() {
           {team.players.length > 0 ? (
             <TeamPitch team={team} />
           ) : (
-            <div className="flex items-center justify-center border-2 border-dashed border-border py-16 text-sm text-fg-dim">
+            <div className="flex items-center justify-center rounded-xl border border-dashed border-border py-16 text-sm text-fg-dim">
               Your squad will appear here.
             </div>
           )}
@@ -149,7 +149,7 @@ export default async function HomePage() {
       {recommendations.latestNews.length > 0 && (
         <section>
           <SectionHeader title="Latest injury news" hint="straight from FPL" />
-          <ul className="divide-y divide-divider border-2 border-border">
+          <ul className="divide-y divide-divider overflow-hidden rounded-xl border border-border">
             {recommendations.latestNews.map((n, i) => (
               <li key={i} className="flex flex-wrap gap-x-3 gap-y-1 px-4 py-2.5 text-sm">
                 <span className="font-medium">{n.web_name}</span>
@@ -169,7 +169,7 @@ export default async function HomePage() {
 
 function EmptyTeam() {
   return (
-    <div className="mb-8 border-2 border-dashed border-border px-8 py-12 text-center">
+    <div className="mb-8 rounded-xl border border-dashed border-border px-8 py-12 text-center">
       <h2 className="text-lg font-medium">No squad yet</h2>
       <p className="mx-auto mt-1.5 max-w-md text-sm text-fg-muted">
         Build your 15 by hand, or let the AI put one together and import it in one click.
@@ -177,13 +177,13 @@ function EmptyTeam() {
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Link
           href="/my-team"
-          className="border border-accent px-5 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-accent/10"
+          className="rounded-full border border-accent px-5 py-2.5 text-sm font-medium text-accent transition-colors hover:bg-accent/10"
         >
           Build my squad
         </Link>
         <Link
           href="/squad-builder"
-          className="border-2 border-border px-5 py-2.5 text-sm text-fg-muted transition-colors hover:border-border-bright hover:text-fg"
+          className="rounded-full border border-border px-5 py-2.5 text-sm text-fg-muted transition-colors hover:border-border-bright hover:text-fg"
         >
           Use the AI builder
         </Link>
@@ -230,7 +230,7 @@ function Countdown({ deadline, now }: { deadline: string | null; now: number }) 
   const hours = Math.floor((ms % 86_400_000) / 3_600_000);
 
   return (
-    <div className="border-2 border-border px-5 py-3 text-right">
+    <div className="rounded-xl border border-border bg-surface px-5 py-3 text-right">
       <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
         Deadline in
       </div>
