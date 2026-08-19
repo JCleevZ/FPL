@@ -53,7 +53,7 @@ export interface RecommendationSet {
   /** When the underlying player data was last refreshed from FPL. */
   dataUpdatedAt: string | null;
   /** Recent FPL status updates, newest first. */
-  latestNews: { web_name: string; team_short: string; news: string; added: string }[];
+  latestNews: { id: number; team_id: number; web_name: string; team_short: string; news: string; added: string }[];
 }
 
 interface Row {
@@ -107,7 +107,7 @@ export interface InsightSet {
   /** The same records keyed by player id, for direct lookup. */
   byId: Map<number, Recommendation>;
   dataUpdatedAt: string | null;
-  latestNews: { web_name: string; team_short: string; news: string; added: string }[];
+  latestNews: { id: number; team_id: number; web_name: string; team_short: string; news: string; added: string }[];
 }
 
 export interface RecommendationOptions {
@@ -307,6 +307,8 @@ export async function getInsights(horizon = 5): Promise<InsightSet> {
     .sort((a, b) => (b.news_added! > a.news_added! ? 1 : -1))
     .slice(0, 6)
     .map((p) => ({
+      id: p.id,
+      team_id: p.team_id,
       web_name: p.web_name,
       team_short: teamShort.get(p.team_id) ?? '',
       news: p.news!,

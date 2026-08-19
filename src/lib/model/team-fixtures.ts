@@ -12,7 +12,7 @@ export interface ClubFixtures {
   short: string;
   name: string;
   /** Players you own from this club. */
-  owned: string[];
+  owned: { id: number; web_name: string }[];
   fixtures: {
     gw: number;
     opponent: string;
@@ -34,7 +34,7 @@ interface FixtureRow {
 }
 
 export async function getSquadFixtures(
-  players: { team_id: number; web_name: string }[],
+  players: { id: number; team_id: number; web_name: string }[],
   span = 5,
 ): Promise<{ fromGw: number; gameweeks: number[]; clubs: ClubFixtures[] }> {
   const teamIds = [...new Set(players.map((p) => p.team_id))];
@@ -63,10 +63,10 @@ export async function getSquadFixtures(
     ((everyTeam ?? []) as { id: number; short_name: string }[]).map((t) => [t.id, t.short_name]),
   );
 
-  const ownedByTeam = new Map<number, string[]>();
+  const ownedByTeam = new Map<number, { id: number; web_name: string }[]>();
   for (const p of players) {
     if (!ownedByTeam.has(p.team_id)) ownedByTeam.set(p.team_id, []);
-    ownedByTeam.get(p.team_id)!.push(p.web_name);
+    ownedByTeam.get(p.team_id)!.push({ id: p.id, web_name: p.web_name });
   }
 
   const clubs: ClubFixtures[] = ((teams.data ?? []) as {

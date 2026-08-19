@@ -9,6 +9,7 @@ import { TeamPitch } from '@/components/team-pitch';
 import { Recommendations } from '@/components/recommendations';
 import { SquadFixtures } from '@/components/squad-fixtures';
 import { SectionHeader, Stat, StatStrip } from '@/components/ui';
+import { PlayerNameLink, TeamBadge } from '@/components/card-modal';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export default async function HomePage() {
 
   const [recommendations, squadFixtures] = await Promise.all([
     getRecommendations({ excludeIds: team.players.map((p) => p.id), perPosition: 12 }),
-    getSquadFixtures(team.players.map((p) => ({ team_id: p.team_id, web_name: p.web_name }))),
+    getSquadFixtures(team.players.map((p) => ({ id: p.id, team_id: p.team_id, web_name: p.web_name }))),
   ]);
 
   return (
@@ -147,9 +148,14 @@ export default async function HomePage() {
           <SectionHeader title="Latest injury news" hint="straight from FPL" />
           <ul className="divide-y divide-divider overflow-hidden rounded-xl border border-border">
             {recommendations.latestNews.map((n, i) => (
-              <li key={i} className="flex flex-wrap gap-x-3 gap-y-1 px-4 py-2.5 text-sm">
-                <span className="font-medium">{n.web_name}</span>
-                <span className="font-mono text-[11px] text-fg-dim">{n.team_short}</span>
+              <li key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-sm">
+                <PlayerNameLink id={n.id} className="font-medium">
+                  {n.web_name}
+                </PlayerNameLink>
+                <span className="flex items-center gap-1.5 font-mono text-[11px] text-fg-dim">
+                  <TeamBadge teamId={n.team_id} size={14} clickable={false} />
+                  {n.team_short}
+                </span>
                 <span className="text-fg-muted">{n.news}</span>
                 <span className="ml-auto font-mono text-[11px] text-fg-dim">
                   {relativeTime(n.added, now)}

@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
 import { canAdd, money, type MyTeam } from '@/lib/team/my-team';
 import { PlayerLine } from '@/components/player-line';
+import { PlayerNameLink } from '@/components/card-modal';
 import type { Recommendation } from '@/lib/model/recommendations';
 
 /**
@@ -331,7 +332,7 @@ export function CandidatePicker({
                     {POSITION_NAME[p.position as Position]}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-sm">
-                    {p.web_name}
+                    <PlayerNameLink id={p.id}>{p.web_name}</PlayerNameLink>
                     <span className="ml-1.5 font-mono text-[10px] text-fg-dim">
                       {teamShort.get(p.team_id)}
                     </span>

@@ -103,6 +103,32 @@ export function CardModalProvider({ children }: { children: React.ReactNode }) {
 // elsewhere in the app.
 // ---------------------------------------------------------------------------
 
+/**
+ * A player's name, clickable to open their profile — for the plain-text spots
+ * that don't already go through `PlayerCard` or `PlayerIdentity` (news feeds,
+ * squad previews, per-player notes).
+ */
+export function PlayerNameLink({
+  id,
+  children,
+  className = '',
+}: {
+  id: number;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const { openPlayer } = useCardModal();
+  return (
+    <button
+      type="button"
+      onClick={() => openPlayer(id)}
+      className={`hover:underline ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
 /** Club crest. Renders nothing until its code has loaded, rather than a broken image. */
 export function TeamBadge({
   teamId,

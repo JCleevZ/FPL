@@ -1,7 +1,7 @@
 'use client';
 
 import { difficultyClass, Explain, FixtureLabel } from '@/components/ui';
-import { useCardModal, TeamBadge } from '@/components/card-modal';
+import { useCardModal, PlayerNameLink, TeamBadge } from '@/components/card-modal';
 import type { ClubFixtures } from '@/lib/model/team-fixtures';
 
 /**
@@ -56,7 +56,14 @@ export function SquadFixtures({
                   {club.short}
                 </button>
               </td>
-              <td className="px-3 py-2 text-xs text-fg-muted">{club.owned.join(', ')}</td>
+              <td className="px-3 py-2 text-xs text-fg-muted">
+                {club.owned.map((p, i) => (
+                  <span key={p.id}>
+                    {i > 0 && ', '}
+                    <PlayerNameLink id={p.id}>{p.web_name}</PlayerNameLink>
+                  </span>
+                ))}
+              </td>
 
               {gameweeks.map((gw) => {
                 const inWeek = club.fixtures.filter((f) => f.gw === gw);

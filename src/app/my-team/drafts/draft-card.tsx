@@ -15,6 +15,7 @@ import {
 import { EditablePitch, type ActiveSwap } from '@/components/editable-pitch';
 import { CandidatePicker, type CandidatePlayer } from '@/components/candidate-picker';
 import { InlineError, TipPill } from '@/components/ui';
+import { PlayerNameLink } from '@/components/card-modal';
 import type { Recommendation } from '@/lib/model/recommendations';
 import type { DraftRow } from './drafts-list';
 
@@ -124,38 +125,48 @@ export function DraftCard({
   return (
     <li className="rounded-xl border border-border bg-surface">
       <div className="flex flex-wrap items-start justify-between gap-3 p-4">
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="flex min-w-0 flex-1 items-start gap-2 text-left"
-          aria-expanded={expanded}
-        >
-          <span
+        <div className="flex min-w-0 flex-1 items-start gap-2">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-label={expanded ? 'Collapse' : 'Expand'}
             className={`mt-1 shrink-0 text-fg-dim transition-transform ${expanded ? 'rotate-90' : ''}`}
-            aria-hidden
           >
             ▶
-          </span>
-          <div className="min-w-0">
-            <h2 className="font-medium">{draft.name}</h2>
-            <p className="tnum mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
-              <span>{draft.formation}</span>
-              <span>{money(team.value)}</span>
-              {draft.xpts !== null && <span className="text-accent">{draft.xpts} xPts</span>}
-              <span className="text-fg-dim">
-                {new Date(draft.createdAt).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                })}
-              </span>
-            </p>
+          </button>
+          <div className="min-w-0 flex-1">
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+              className="block w-full text-left"
+            >
+              <h2 className="font-medium">{draft.name}</h2>
+              <p className="tnum mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
+                <span>{draft.formation}</span>
+                <span>{money(team.value)}</span>
+                {draft.xpts !== null && <span className="text-accent">{draft.xpts} xPts</span>}
+                <span className="text-fg-dim">
+                  {new Date(draft.createdAt).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                  })}
+                </span>
+              </p>
+            </button>
             {!expanded && (
               <p className="mt-2 truncate text-xs leading-relaxed text-fg-dim">
-                {draft.players.map((p) => p.web_name).join(', ')}
+                {draft.players.map((p, i) => (
+                  <span key={p.id}>
+                    {i > 0 && ', '}
+                    <PlayerNameLink id={p.id}>{p.web_name}</PlayerNameLink>
+                  </span>
+                ))}
               </p>
             )}
           </div>
-        </button>
+        </div>
 
         <div className="flex shrink-0 gap-2">
           <button

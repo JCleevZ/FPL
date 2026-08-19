@@ -7,6 +7,7 @@ import { importSquad } from '@/lib/team/actions';
 import { generateSquad, saveSquad, type BuilderState } from './actions';
 import Link from 'next/link';
 import { PitchView } from '@/components/pitch-view';
+import { PlayerNameLink } from '@/components/card-modal';
 import { PlayerPicker } from '@/components/player-picker';
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
 import type { SquadFilters } from '@/lib/ai/schemas';
@@ -487,7 +488,9 @@ function Result({
                 <span className="w-11 shrink-0 font-mono text-xs text-fg-dim">
                   {POSITION_NAME[p.position as Position]}
                 </span>
-                <span className="w-32 shrink-0 text-sm font-medium">{p.web_name}</span>
+                <PlayerNameLink id={p.id} className="w-32 shrink-0 text-left text-sm font-medium">
+                  {p.web_name}
+                </PlayerNameLink>
                 <span className="text-sm text-fg-muted">{p.note}</span>
               </li>
             ))}
