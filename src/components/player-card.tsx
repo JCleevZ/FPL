@@ -2,6 +2,7 @@
 
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
 import { useCardModal, PlayerAvatar, TeamBadge } from '@/components/card-modal';
+import { HoverCard } from '@/components/hover-card';
 
 const POSITION_COLOUR: Record<Position, string> = {
   1: 'text-pos-gk',
@@ -110,14 +111,30 @@ export function PlayerCard({
     return <div className={shared}>{body}</div>;
   }
 
-  return (
+  const button = (
     <button
       type="button"
       onClick={() => openPlayer(id)}
-      title={`View ${name}`}
       className={`${shared} block transition-colors hover:border-border-bright`}
     >
       {body}
     </button>
+  );
+
+  return (
+    <HoverCard
+      content={
+        <div>
+          <div className="font-semibold text-fg">{name}</div>
+          <div className="mt-0.5">
+            {POSITION_NAME[position]} · {team} · {price}
+          </div>
+          {flag && flagTitle && <div className="mt-1.5 text-danger">{flagTitle}</div>}
+          <div className="mt-1.5 text-[10px] text-fg-dim">Click for full profile</div>
+        </div>
+      }
+    >
+      {button}
+    </HoverCard>
   );
 }

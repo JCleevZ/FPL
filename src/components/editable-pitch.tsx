@@ -5,7 +5,6 @@ import { POSITION_NAME, type Position } from '@/lib/fpl/types';
 import { SQUAD_QUOTA } from '@/lib/model/optimiser';
 import { money, type MyTeam } from '@/lib/team/my-team';
 import { PlayerCard } from '@/components/player-card';
-import { useCardModal } from '@/components/card-modal';
 
 /**
  * The editable squad pitch. Used identically by My Team and by an expanded
@@ -13,11 +12,14 @@ import { useCardModal } from '@/components/card-modal';
  * one place either page's squad grid is drawn.
  *
  * Three ways to change a slot, all converging on the same `onDropCandidate`
- * callback: the red badge removes a player outright; clicking a card opens an
- * inline "swap" confirmation that hands off to the caller's candidate picker;
- * dragging a candidate row from that picker onto any slot of the same
- * position drops it straight in. With `editable={false}` this renders as a
- * plain read-only pitch — no badges, no empty-slot ghosts, nothing clickable.
+ * callback: the red badge removes a player outright; the small cyan ⇄ badge
+ * opens an inline "swap" confirmation that hands off to the caller's
+ * candidate picker; dragging a candidate row from that picker onto any slot
+ * of the same position drops it straight in. Clicking the card itself (not
+ * the ⇄ badge) opens that player's full profile popup instead — the two
+ * click targets stay deliberately separate so neither shadows the other.
+ * With `editable={false}` this renders as a plain read-only pitch — no
+ * badges, no empty-slot ghosts, nothing but the profile popup on click.
  */
 
 const STATUS_LABEL: Record<string, string> = {
@@ -162,7 +164,6 @@ function FilledSlot({
 }) {
   const [stage, setStage] = useState<Stage>('idle');
   const [dragOver, setDragOver] = useState(false);
-  const { openPlayer } = useCardModal();
 
   const beginSwap = () => {
     setStage('loading');
@@ -203,15 +204,6 @@ function FilledSlot({
           isVice={player.is_vice_captain}
           muted={pending}
         />
-
-        {editable && stage === 'idle' && !pending && (
-          <button
-            type="button"
-            onClick={() => setStage('confirm')}
-            aria-label={`Options for ${player.web_name}`}
-            className="absolute inset-0 rounded-lg outline-none"
-          />
-        )}
 
         {editable && stage === 'confirm' && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 rounded-lg bg-base/90 backdrop-blur-sm">
@@ -257,13 +249,15 @@ function FilledSlot({
           <ArmbandButton label="V" active={player.is_vice_captain} disabled={pending} onClick={onSetVice} />
           <button
             type="button"
-            onClick={() => openPlayer(player.id)}
-            aria-label={`View ${player.web_name}`}
-            title={`View ${player.web_name}`}
-            className="flex h-4 w-4 items-center justify-center rounded border border-border-bright
-                       text-[9px] font-bold leading-none text-fg-dim transition-colors hover:text-fg"
+            onClick={() => setStage('confirm')}
+            disabled={pending}
+            aria-label={`Swap ${player.web_name}`}
+            title={`Swap ${player.web_name}`}
+            className="flex h-4 w-4 items-center justify-center rounded border border-cyan/40
+                       text-[10px] font-bold leading-none text-cyan transition-colors
+                       hover:bg-cyan/10 disabled:pointer-events-none disabled:opacity-50"
           >
-            ⓘ
+            ⇄
           </button>
           <button
             type="button"
