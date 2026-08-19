@@ -44,6 +44,8 @@ export function PitchView({
               {row.map((p) => (
                 <PlayerCard
                   key={p.id}
+                  id={p.id}
+                  teamId={p.team_id}
                   name={p.web_name}
                   team={teamName.get(p.team_id) ?? ''}
                   position={p.position as Position}

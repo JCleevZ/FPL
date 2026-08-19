@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { FixtureLabel, difficultyClass } from '@/components/ui';
+import { useCardModal, TeamBadge } from '@/components/card-modal';
 
 export interface TickerTeam {
   id: number;
@@ -33,6 +34,7 @@ export function FixtureTicker({
   fixtures: FixtureRow[];
   startGw: number;
 }) {
+  const { openTeam } = useCardModal();
   const [span, setSpan] = useState(8);
   const [sortByDifficulty, setSortByDifficulty] = useState(false);
 
@@ -172,8 +174,15 @@ export function FixtureTicker({
             {orderedTeams.map((team) => (
               <tr key={team.id} className="border-t border-divider">
                 <td className="sticky left-0 bg-base px-3 py-1.5 font-medium">
-                  {team.short_name}
-                  <span className="ml-2 hidden text-xs text-fg-dim lg:inline">{team.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => openTeam(team.id)}
+                    className="flex items-center gap-1.5 hover:underline"
+                  >
+                    <TeamBadge teamId={team.id} size={16} clickable={false} />
+                    {team.short_name}
+                    <span className="hidden text-xs text-fg-dim lg:inline">{team.name}</span>
+                  </button>
                 </td>
 
                 {gameweeks.map((gw) => {

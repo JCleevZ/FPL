@@ -39,6 +39,8 @@ export function TeamPitch({ team, className = '' }: { team: MyTeam; className?: 
                 return (
                   <PlayerCard
                     key={p.id}
+                    id={p.id}
+                    teamId={p.team_id}
                     name={p.web_name}
                     team={p.team_short}
                     position={p.position}

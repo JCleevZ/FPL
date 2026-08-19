@@ -5,6 +5,7 @@ import { POSITION_NAME, type Position } from '@/lib/fpl/types';
 import { SQUAD_QUOTA } from '@/lib/model/optimiser';
 import { money, type MyTeam } from '@/lib/team/my-team';
 import { PlayerCard } from '@/components/player-card';
+import { useCardModal } from '@/components/card-modal';
 
 /**
  * The editable squad pitch. Used identically by My Team and by an expanded
@@ -123,6 +124,7 @@ interface SlotTeamPlayer {
   id: number;
   web_name: string;
   position: Position;
+  team_id: number;
   team_short: string;
   now_cost: number;
   is_captain: boolean;
@@ -160,6 +162,7 @@ function FilledSlot({
 }) {
   const [stage, setStage] = useState<Stage>('idle');
   const [dragOver, setDragOver] = useState(false);
+  const { openPlayer } = useCardModal();
 
   const beginSwap = () => {
     setStage('loading');
@@ -188,6 +191,8 @@ function FilledSlot({
         }}
       >
         <PlayerCard
+          id={player.id}
+          teamId={player.team_id}
           name={player.web_name}
           team={player.team_short}
           position={player.position}
@@ -250,6 +255,16 @@ function FilledSlot({
         <div className="flex gap-1">
           <ArmbandButton label="C" active={player.is_captain} disabled={pending} onClick={onSetCaptain} />
           <ArmbandButton label="V" active={player.is_vice_captain} disabled={pending} onClick={onSetVice} />
+          <button
+            type="button"
+            onClick={() => openPlayer(player.id)}
+            aria-label={`View ${player.web_name}`}
+            title={`View ${player.web_name}`}
+            className="flex h-4 w-4 items-center justify-center rounded border border-border-bright
+                       text-[9px] font-bold leading-none text-fg-dim transition-colors hover:text-fg"
+          >
+            ⓘ
+          </button>
           <button
             type="button"
             onClick={onRemove}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Nav } from '@/components/nav';
+import { CardModalProvider } from '@/components/card-modal';
 import { createClient } from '@/lib/supabase/server';
 import './globals.css';
 
@@ -34,8 +35,10 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable} h-full`}>
       <body className="flex min-h-full flex-col">
-        <Nav username={username} />
-        {children}
+        <CardModalProvider>
+          <Nav username={username} />
+          {children}
+        </CardModalProvider>
       </body>
     </html>
   );

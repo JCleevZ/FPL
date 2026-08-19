@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
+import { useCardModal, TeamBadge } from '@/components/card-modal';
 
 export interface PlayerRow {
   id: number;
@@ -150,6 +151,7 @@ function setPieces(p: PlayerRow): string | null {
 }
 
 export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: TeamRow[] }) {
+  const { openPlayer, openTeam } = useCardModal();
   const [search, setSearch] = useState('');
   const [position, setPosition] = useState(0);
   const [teamId, setTeamId] = useState(0);
@@ -318,7 +320,11 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
               return (
                 <tr key={p.id} className="border-t border-divider transition-colors hover:bg-surface">
                   <td className="whitespace-nowrap px-3 py-2 font-medium">
-                    <span className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => openPlayer(p.id)}
+                      className="flex items-center gap-1.5 hover:underline"
+                    >
                       {p.web_name}
                       {sp && (
                         <span
@@ -336,9 +342,18 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
                           {p.chance_of_playing_next_round ?? 0}%
                         </span>
                       )}
-                    </span>
+                    </button>
                   </td>
-                  <td className="px-2 py-2 text-fg-muted">{teamName.get(p.team_id)}</td>
+                  <td className="px-2 py-2 text-fg-muted">
+                    <button
+                      type="button"
+                      onClick={() => openTeam(p.team_id)}
+                      className="flex items-center gap-1.5 hover:underline"
+                    >
+                      <TeamBadge teamId={p.team_id} size={14} clickable={false} />
+                      {teamName.get(p.team_id)}
+                    </button>
+                  </td>
                   <td className="px-2 py-2">
                     <span
                       className={`rounded-full px-1.5 py-0.5 font-mono text-[10px] font-semibold ${POSITION_CHIP[p.position as Position]}`}

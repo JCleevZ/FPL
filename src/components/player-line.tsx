@@ -1,6 +1,9 @@
+'use client';
+
 import { POSITION_NAME, type Position } from '@/lib/fpl/types';
 import { money } from '@/lib/team/my-team';
 import { Explain, ReasonTag, difficultyClass } from '@/components/ui';
+import { useCardModal, TeamBadge } from '@/components/card-modal';
 import type { Recommendation } from '@/lib/model/recommendations';
 
 /**
@@ -78,12 +81,21 @@ export function PlayerLine({
 
 /** Name, position and club — the identifying line. */
 export function PlayerIdentity({ insight }: { insight: Recommendation }) {
+  const { openPlayer } = useCardModal();
   return (
     <div className="flex items-baseline gap-1.5">
-      <span className="truncate text-sm font-medium">{insight.web_name}</span>
+      <button
+        type="button"
+        onClick={() => openPlayer(insight.id)}
+        title={`View ${insight.web_name}`}
+        className="truncate text-sm font-medium hover:underline"
+      >
+        {insight.web_name}
+      </button>
       <span className={`font-mono text-[10px] uppercase ${POSITION_COLOUR[insight.position]}`}>
         {POSITION_NAME[insight.position]}
       </span>
+      <TeamBadge teamId={insight.team_id} size={12} />
       <span className="font-mono text-[10px] text-fg-dim">{insight.team_short}</span>
     </div>
   );

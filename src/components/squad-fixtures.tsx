@@ -1,4 +1,7 @@
+'use client';
+
 import { difficultyClass, Explain, FixtureLabel } from '@/components/ui';
+import { useCardModal, TeamBadge } from '@/components/card-modal';
 import type { ClubFixtures } from '@/lib/model/team-fixtures';
 
 /**
@@ -12,6 +15,8 @@ export function SquadFixtures({
   clubs: ClubFixtures[];
   gameweeks: number[];
 }) {
+  const { openTeam } = useCardModal();
+
   if (clubs.length === 0) return null;
 
   return (
@@ -41,7 +46,16 @@ export function SquadFixtures({
         <tbody>
           {clubs.map((club) => (
             <tr key={club.teamId} className="border-t border-divider">
-              <td className="whitespace-nowrap px-3 py-2 font-medium">{club.short}</td>
+              <td className="whitespace-nowrap px-3 py-2 font-medium">
+                <button
+                  type="button"
+                  onClick={() => openTeam(club.teamId)}
+                  className="flex items-center gap-1.5 hover:underline"
+                >
+                  <TeamBadge teamId={club.teamId} size={16} clickable={false} />
+                  {club.short}
+                </button>
+              </td>
               <td className="px-3 py-2 text-xs text-fg-muted">{club.owned.join(', ')}</td>
 
               {gameweeks.map((gw) => {
