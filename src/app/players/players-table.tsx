@@ -293,7 +293,9 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
         <table className="w-full border-collapse text-sm">
           <thead className="sticky top-0 z-10 bg-surface-2">
             <tr>
-              <th className="px-3 py-2.5 text-left text-xs font-semibold text-fg-muted">Player</th>
+              <th className="sticky left-0 z-20 bg-surface-2 px-3 py-2.5 text-left text-xs font-semibold text-fg-muted">
+                Player
+              </th>
               <th className="px-2 py-2.5 text-left text-xs font-semibold text-fg-muted">Team</th>
               <th className="px-2 py-2.5 text-left text-xs font-semibold text-fg-muted">Pos</th>
               {COLUMNS.map((c) => (
@@ -319,7 +321,7 @@ export function PlayersTable({ players, teams }: { players: PlayerRow[]; teams: 
               const sp = setPieces(p);
               return (
                 <tr key={p.id} className="border-t border-divider transition-colors hover:bg-surface">
-                  <td className="whitespace-nowrap px-3 py-2 font-medium">
+                  <td className="sticky left-0 z-[1] whitespace-nowrap bg-base px-3 py-2 font-medium">
                     <button
                       type="button"
                       onClick={() => openPlayer(p.id)}

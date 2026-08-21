@@ -103,7 +103,7 @@ export function PlayerCard({
     </>
   );
 
-  const shared = `relative w-[96px] rounded-lg border bg-surface-2 px-2 pb-2 pt-2 text-center sm:w-[108px]
+  const shared = `relative w-[90px] rounded-lg border bg-surface-2 px-2 pb-2 pt-2 text-center sm:w-[108px]
                    ${isCaptain ? 'border-accent' : 'border-border'}
                    ${muted ? 'opacity-60' : ''}`;
 
@@ -123,6 +123,7 @@ export function PlayerCard({
 
   return (
     <HoverCard
+      clickToOpen={false}
       content={
         <div>
           <div className="font-semibold text-fg">{name}</div>

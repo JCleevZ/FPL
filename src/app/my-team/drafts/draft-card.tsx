@@ -124,8 +124,8 @@ export function DraftCard({
 
   return (
     <li className="rounded-xl border border-border bg-surface">
-      <div className="flex flex-wrap items-start justify-between gap-3 p-4">
-        <div className="flex min-w-0 flex-1 items-start gap-2">
+      <div className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+        <div className="flex min-w-0 items-start gap-2 sm:flex-1">
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
@@ -219,8 +219,13 @@ export function DraftCard({
 
           {editing && (
             <TipPill>
-              You can also drag a player straight onto any slot to fill or swap it — works
-              even when the squad is full.
+              <span className="sm:hidden">
+                Use the ⇄ badge on a card to swap it, or tap an empty slot to fill it.
+              </span>
+              <span className="hidden sm:inline">
+                You can also drag a player straight onto any slot to fill or swap it — works
+                even when the squad is full.
+              </span>
             </TipPill>
           )}
 

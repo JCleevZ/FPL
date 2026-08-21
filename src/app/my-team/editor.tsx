@@ -336,8 +336,13 @@ export function TeamEditor({
         <section>
           <SectionHeader title="Your squad" hint="C and V set captain and vice" />
           <TipPill>
-            You can also drag a player straight onto any slot to fill or swap it — works
-            even when the squad is full.
+            <span className="sm:hidden">
+              Use the ⇄ badge on a card to swap it, or tap an empty slot to fill it.
+            </span>
+            <span className="hidden sm:inline">
+              You can also drag a player straight onto any slot to fill or swap it — works
+              even when the squad is full.
+            </span>
           </TipPill>
           <EditablePitch
             team={team}

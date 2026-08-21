@@ -16,6 +16,11 @@ import { createPortal } from 'react-dom';
  * us measure the card and clamp it inside the viewport before it is painted:
  * it opens below the trigger, flips above when there is no room, and is pulled
  * back from either edge rather than being allowed to overflow.
+ *
+ * Touch has no hover, so a tap on the trigger opens it too (`clickToOpen`,
+ * default on) and a tap anywhere else closes it. Turn it off where the trigger
+ * is already a real button doing something more useful on tap — see
+ * `PlayerCard`, which opens the full profile popup instead of a peek.
  */
 
 /** Keep this far from the viewport edge. */
@@ -27,10 +32,13 @@ export function HoverCard({
   children,
   content,
   wide = false,
+  clickToOpen = true,
 }: {
   children: React.ReactNode;
   content: React.ReactNode;
   wide?: boolean;
+  /** Tap-to-open for touch. Off when the trigger already has its own tap action. */
+  clickToOpen?: boolean;
 }) {
   const triggerRef = useRef<HTMLSpanElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -90,6 +98,20 @@ export function HoverCard({
     };
   }, [open, place]);
 
+  // The only reliable "close" signal on touch: a tap outside both the trigger
+  // and the card itself. Capture phase, so it runs before the tap that opened
+  // it can be mistaken for one that should close it.
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (triggerRef.current?.contains(target) || cardRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+    document.addEventListener('click', onDocClick, true);
+    return () => document.removeEventListener('click', onDocClick, true);
+  }, [open]);
+
   return (
     <>
       <span
@@ -100,6 +122,7 @@ export function HoverCard({
         onMouseLeave={() => setOpen(false)}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
+        onClick={clickToOpen ? () => setOpen(true) : undefined}
       >
         {children}
       </span>

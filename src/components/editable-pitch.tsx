@@ -244,7 +244,7 @@ function FilledSlot({
       </div>
 
       {editable && (
-        <div className="flex gap-1">
+        <div className="flex gap-0.5 sm:gap-1">
           <ArmbandButton label="C" active={player.is_captain} disabled={pending} onClick={onSetCaptain} />
           <ArmbandButton label="V" active={player.is_vice_captain} disabled={pending} onClick={onSetVice} />
           <button
@@ -330,7 +330,7 @@ function EmptySlot({
         const id = Number(e.dataTransfer.getData('text/x-candidate-id'));
         if (id) onDrop(id);
       }}
-      className={`flex w-[96px] flex-col items-center justify-center rounded-lg border-2 border-dashed
+      className={`flex w-[90px] flex-col items-center justify-center rounded-lg border-2 border-dashed
                   px-2 py-4 text-center transition-colors sm:w-[108px] ${
                     dragOver
                       ? 'border-accent bg-accent/10'

@@ -24,7 +24,7 @@ export function SquadFixtures({
       <table className="w-full border-collapse text-sm">
         <thead className="bg-surface-2">
           <tr>
-            <th className="px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.14em] text-fg-muted">
+            <th className="sticky left-0 z-10 bg-surface-2 px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.14em] text-fg-muted">
               Club
             </th>
             <th className="px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.14em] text-fg-muted">
@@ -46,7 +46,7 @@ export function SquadFixtures({
         <tbody>
           {clubs.map((club) => (
             <tr key={club.teamId} className="border-t border-divider">
-              <td className="whitespace-nowrap px-3 py-2 font-medium">
+              <td className="sticky left-0 z-[1] whitespace-nowrap bg-base px-3 py-2 font-medium">
                 <button
                   type="button"
                   onClick={() => openTeam(club.teamId)}
